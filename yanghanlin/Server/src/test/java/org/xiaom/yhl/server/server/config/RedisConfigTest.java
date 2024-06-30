@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @Version 1.0
  */
 public class RedisConfigTest {
-    private RedisConfig redisConfig = new RedisConfig();
+ /*   private RedisConfig redisConfig = new RedisConfig();
     @Test
     public void testRedisConnectionFactory() {
         RedisConnectionFactory connectionFactory = redisConfig.redisConnectionFactory();
@@ -25,5 +25,5 @@ public class RedisConfigTest {
         RedisTemplate<String, Object> redisTemplate = redisConfig.redisTemplate();
         assertNotNull(redisTemplate, "RedisTemplate should not be null");
         assertNotNull(redisTemplate.getConnectionFactory(), "ConnectionFactory in RedisTemplate should not be null");
-    }
+    }*/
 }

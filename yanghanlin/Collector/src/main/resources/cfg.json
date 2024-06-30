@@ -1,0 +1,7 @@
+{
+  "files": [
+    "/home/yhl/work/a.log",
+    "/home/yhl/work/b.log"
+  ],
+  "log_storage": "local_file"
+}

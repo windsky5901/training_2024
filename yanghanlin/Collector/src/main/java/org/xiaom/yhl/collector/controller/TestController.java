@@ -5,6 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xiaom.yhl.collector.service.CPUAndMemUsageService;
+import org.xiaom.yhl.collector.service.LogFileService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -23,6 +27,9 @@ public class TestController {
 
     @Autowired
     private CPUAndMemUsageService cpuAndMemUsageService;
+
+    @Autowired
+    private LogFileService logFileService;
 
     @GetMapping("/cpu-usage")
     public String getCpuUsage() {
@@ -44,5 +51,20 @@ public class TestController {
             exception_2.printStackTrace();
             return "Error: " + exception_2.getMessage();
         }
+    }
+
+    @GetMapping("/log-files")
+    public List<String> getLogFiles() {
+        return logFileService.getLogFiles();
+    }
+
+    @GetMapping("/log-content")
+    public List<String> getLogContent() {
+        List<String> allLogs = new ArrayList<>();
+        List<String> logFiles = logFileService.getLogFiles();
+        for (String logFile : logFiles) {
+            allLogs.addAll(logFileService.readLogs(logFile));
+        }
+        return allLogs;
     }
 }

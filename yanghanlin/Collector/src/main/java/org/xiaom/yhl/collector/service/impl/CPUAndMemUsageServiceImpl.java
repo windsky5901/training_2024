@@ -43,6 +43,7 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
         ChannelExec channel = null;
 
         try {
+            logger.info("Connecting to SSH server {}:{}", sshProperties.getHost(), sshProperties.getPort());
             session = jsch.getSession(sshProperties.getUser(), sshProperties.getHost(), sshProperties.getPort());
             session.setPassword(sshProperties.getPassword());
 
@@ -51,6 +52,7 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
             session.setConfig(config);
 
             session.connect();
+            logger.info("SSH session connected");
 
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand("grep 'cpu ' /proc/stat");
@@ -58,6 +60,7 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
             BufferedReader reader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 
             channel.connect();
+            logger.info("SSH channel connected, executing command: grep 'cpu ' /proc/stat");
 
             String line = reader.readLine();
             logger.info("Command output: " + line);
@@ -78,19 +81,17 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
                 return 1 - ((double) idleTimeDelta / totalTimeDelta);
             }
         } catch (JSchException e) {
-            logger.error("发生了SSH连接错误: {}", e.getMessage());
+            logger.error("JSchException occurred: {}", e.getMessage());
         } catch (IOException e) {
-            logger.error("读取命令输出时发生IO错误: {}", e.getMessage());
-        } catch (NumberFormatException e) {
-            logger.error("解析CPU统计数据失败: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("意外错误:{}", e.getMessage());
+            logger.error("IOException occurred: {}", e.getMessage());
         } finally {
             if (channel != null) {
                 channel.disconnect();
+                logger.info("SSH channel disconnected");
             }
             if (session != null) {
                 session.disconnect();
+                logger.info("SSH session disconnected");
             }
         }
         return 0.0;
@@ -103,6 +104,7 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
         ChannelExec channel = null;
 
         try {
+            logger.info("Connecting to SSH server {}:{}", sshProperties.getHost(), sshProperties.getPort());
             session = jsch.getSession(sshProperties.getUser(), sshProperties.getHost(), sshProperties.getPort());
             session.setPassword(sshProperties.getPassword());
 
@@ -111,6 +113,7 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
             session.setConfig(config);
 
             session.connect();
+            logger.info("SSH session connected");
 
             channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand("free -m");
@@ -118,6 +121,7 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
             BufferedReader reader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 
             channel.connect();
+            logger.info("SSH channel connected, executing command: free -m");
 
             reader.readLine(); // Skip the header line
             String line = reader.readLine();
@@ -131,22 +135,19 @@ public class CPUAndMemUsageServiceImpl implements CPUAndMemUsageService {
                 return (double) usedMemory / totalMemory;
             }
         } catch (JSchException e) {
-            logger.error("发生了SSH连接错误: {}", e.getMessage());
+            logger.error("JSchException occurred: {}", e.getMessage());
         } catch (IOException e) {
-            logger.error("读取命令输出时发生IO错误: {}", e.getMessage());
-        } catch (NumberFormatException e) {
-            logger.error("解析内存统计数据失败: {}", e.getMessage());
-        } catch (Exception e) {
-            logger.error("意外错误:{}", e.getMessage());
+            logger.error("IOException occurred: {}", e.getMessage());
         } finally {
             if (channel != null) {
                 channel.disconnect();
+                logger.info("SSH channel disconnected");
             }
             if (session != null) {
                 session.disconnect();
+                logger.info("SSH session disconnected");
             }
         }
         return 0.0;
     }
 }
-

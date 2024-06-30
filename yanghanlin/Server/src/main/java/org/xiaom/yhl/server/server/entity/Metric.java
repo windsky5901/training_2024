@@ -2,6 +2,7 @@ package org.xiaom.yhl.server.server.entity;
 
 import jakarta.persistence.*;
 
+import java.util.HashMap;
 import java.util.Map;
 /**
  * ClassName: Metric
@@ -13,24 +14,41 @@ import java.util.Map;
  * @Version 1.0
  */
 @Entity
+@Table(name = "metric")
 public class Metric {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String metric;
-    private String endpoint;
-    private long timestamp;
-    private long step;
-    private double value;
-    @ElementCollection
-    private Map<String, String> tags;
 
-    public Map<String, String> getTags() {
-        return tags;
+    @Column(nullable = false)
+    private String metric;
+
+    @Column(nullable = false)
+    private String endpoint;
+
+    @Column(nullable = false)
+    private long timestamp;
+
+    @Column(nullable = false)
+    private long step;
+
+    @Column(nullable = false)
+    private double value;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "metric_tags", joinColumns = @JoinColumn(name = "metric_id"))
+    @MapKeyColumn(name = "tag_key")
+    @Column(name = "tag_value")
+    private Map<String, String> tags = new HashMap<>();
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
     }
 
-    public void setTags(Map<String, String> tags) {
-        this.tags = tags;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getMetric() {
@@ -73,11 +91,11 @@ public class Metric {
         this.value = value;
     }
 
-    public Long getId() {
-        return id;
+    public Map<String, String> getTags() {
+        return tags;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
     }
 }
